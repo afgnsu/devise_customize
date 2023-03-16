@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Admins</h1>
+
+<table width='100%''>
+  <thead bgcolor='#CCC'>
+    <tr>
+      <th>Email</th>
+      <th>Account</th>
+      <th>Name</th>
+      <th>Password</th>
+      <!-- <th>Password confirmation</th> -->
+      <th>Password remember</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @admins.each do |admin| %>
+      <tr>
+        <td><%= admin.email %></td>
+        <td><%= admin.account %></td>
+        <td><%= admin.name %></td>
+        <td><%= truncate(admin.password) %></td>
+        <!-- <td><%= admin.password_confirmation %></td> -->
+        <td><%= admin.remember_created_at ? "Y" : "N" %></td>
+        <td><%= link_to 'Show', admin %> |
+        <%= link_to 'Edit', edit_admin_path(admin) %>
+        <%# link_to 'Destroy', admin, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%# link_to 'New Admin', new_admin_path %>
+<%# link_to 'New Admin', new_registration_path %>
+<%# link_to "Sign up", new_registration_path(resource_name) %><br />
+<%= link_to "Sign up", new_admin_registration_path %><br />
