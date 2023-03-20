@@ -1,8 +1,8 @@
 # ●客製化 Devise
 
-<kbd>蘇介吾 2023/03/16</kbd>
+<kbd>蘇介吾 2023/03/20</kbd>
 
-* 目的：除了可以註冊、登入、登出外，還要增加列表清單、查詢、修改的功能。順便加入快速新增假帳號的功能（Faker）。
+* 目的：除了可以註冊、登入、登出外，還要增加列表清單、查詢、修改的功能。順便加入快速新增假帳號的功能（FfakerTW）。
 
 ## 1. 環境
 
@@ -23,7 +23,7 @@ $ rails -v  #5.2.8.1
 
 $ rails _5.2.8.1_ new  devise3 -d mysql
 
-cd devise3/
+cd devise/
 
 bundle lock --add-platform x86-mingw32 x86-mswin32 x64-mingw32 java
 ```
@@ -34,7 +34,7 @@ bundle lock --add-platform x86-mingw32 x86-mswin32 x64-mingw32 java
 $ vi Gemfile  #加入 
 ======================================
 gem 'devise'
-gem 'faker'
+gem 'ffakerTW'
 ======================================
 
 $ bundle  #安裝套件
@@ -149,31 +149,27 @@ end
 # 5.  新增 admins 控制器/視圖
 
 ```ruby
-#用腳手架建立 admin MVC
-$ rails g scaffold admins email account name password password_confirmation
+#用腳手架建立 admin Controller 和 View (沒有Model!)
+$ rails g  scaffold_controller admins email account name password password_confirmation
   
 #快速新增假帳號
 $ vi db/seeds.rb
 =======================================
-Faker::Config.locale = :en  #語系設定為英文
-
 Admin.delete_all  #先將原本資料都清空
 
 Admin.create(name: 'Patrick', account: 'afgn', email: 'a@a.a', password: '123456')  #建立第一個管理者帳號
 
-20.times do |i|  #其他20個帳號就用隨機產生
-  name = Faker::Name.name[3..15].gsub(/\W/,'')
-  account = name.downcase
-  domain = Faker::Internet.email.split('@')[1]
+20.times do  #其他20個帳號就用隨機產生
+  name = FFakerTW::NameTW.name
+  account = FFakerTW::Name.first_name.downcase  #帳號轉小寫
+  domain = FFakerTW::Internet.email.split('@')[1]
   email = account + "@" + domain
   Admin.create(
     name: name,
-    #account: Faker::Alphanumeric.alpha(number: 5),
-    email: email,
-    #account: email.split('@')[0],
     account: account,
-    password: 'pass@123'
-    )
+    email: email,
+    password: '123456'
+  )
 end
 =======================================
   
@@ -251,8 +247,11 @@ end
   
 $ vi config/initializers/devise.rb  #加入
 =======================================
+#config.authentication_keys = [:email]
 config.authentication_keys = [:login]
+#config.case_insensitive_keys = [:email]
 config.case_insensitive_keys = [:login]
+#config.strip_whitespace_keys = [:email]
 config.strip_whitespace_keys = [:login]
 =======================================
 ```
